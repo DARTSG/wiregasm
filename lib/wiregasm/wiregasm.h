@@ -8,7 +8,6 @@
 
 using namespace std;
 
-
 struct ProtoTree
 {
   string label;
@@ -23,7 +22,8 @@ struct ProtoTree
   vector<ProtoTree> tree;
 };
 
-struct FollowPayload {
+struct FollowPayload
+{
   int number;
   string data;
   unsigned int server;
@@ -46,7 +46,8 @@ struct DataSource
   string data;
 };
 
-struct CompleteField {
+struct CompleteField
+{
   string field;
   int type;
   string name;
