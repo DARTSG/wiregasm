@@ -25,28 +25,28 @@ EMSCRIPTEN_BINDINGS(Wiregasm)
 EMSCRIPTEN_BINDINGS(TapResponse)
 {
   value_object<TapResponse>("TapResponse")
-      .field("taps", &TapResponse::taps)
-      .field("err", &TapResponse::err);
+    .field("taps", &TapResponse::taps)
+    .field("error", &TapResponse::error);
 }
 
 EMSCRIPTEN_BINDINGS(ExportObject)
 {
   value_object<ExportObject>("ExportObject")
-      .field("pkt", &ExportObject::pkt)
-      .field("hostname", &ExportObject::hostname)
-      .field("type", &ExportObject::type)
-      .field("len", &ExportObject::len)
-      .field("filename", &ExportObject::filename)
-      .field("_download", &ExportObject::_download);
+    .field("pkt", &ExportObject::pkt)
+    .field("hostname", &ExportObject::hostname)
+    .field("type", &ExportObject::type)
+    .field("len", &ExportObject::len)
+    .field("filename", &ExportObject::filename)
+    .field("_download", &ExportObject::_download);
 }
 
 EMSCRIPTEN_BINDINGS(ExportObjectTap)
 {
   value_object<ExportObjectTap>("ExportObjectTap")
-      .field("tap", &ExportObjectTap::tap)
-      .field("type", &ExportObjectTap::type)
-      .field("proto", &ExportObjectTap::proto)
-      .field("objects", &ExportObjectTap::objects);
+    .field("tap", &ExportObjectTap::tap)
+    .field("type", &ExportObjectTap::type)
+    .field("proto", &ExportObjectTap::proto)
+    .field("objects", &ExportObjectTap::objects);
 }
 
 EMSCRIPTEN_BINDINGS(DissectSession)
@@ -57,7 +57,7 @@ EMSCRIPTEN_BINDINGS(DissectSession)
     .function("getFrames", &DissectSession::getFrames)
     .function("getFrame", &DissectSession::getFrame)
     .function("tap", &DissectSession::tap)
-    .function("downloadFile", &DissectSession::downloadFile)
+    .function("download", &DissectSession::download)
     .function("follow", &DissectSession::follow);
 }
 
@@ -240,10 +240,17 @@ EMSCRIPTEN_BINDINGS(stl_wrappers)
   register_map<string, string>("map<string, string>");
 }
 
-EMSCRIPTEN_BINDINGS(DownloadFile)
+EMSCRIPTEN_BINDINGS(Download)
 {
-  value_object<DownloadFile>("DownloadFile")
-    .field("file", &DownloadFile::file)
-    .field("mime", &DownloadFile::mime)
-    .field("data", &DownloadFile::data);
+  value_object<Download>("Download")
+    .field("file", &Download::file)
+    .field("mime", &Download::mime)
+    .field("data", &Download::data);
+}
+
+EMSCRIPTEN_BINDINGS(DownloadResponse)
+{
+  value_object<DownloadResponse>("DownloadResponse")
+    .field("error", &DownloadResponse::error)
+    .field("download", &DownloadResponse::download);
 }
