@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 root = true
 
 # Unix-style newlines with a newline ending every file
@@ -9,9 +8,6 @@ end_of_line = lf
 insert_final_newline = true
 
 [*.{c,c++,cc,cpp,cxx,h,h++,hh,hpp,hxx,inl,ipp,tlh,tli}]
-=======
-[*]
->>>>>>> 37d0366 (fix formatting)
 cpp_indent_braces=false
 cpp_indent_multi_line_relative_to=statement_begin
 cpp_indent_within_parentheses=indent
