@@ -163,8 +163,155 @@ describe("Wiregasm Library Wrapper", () => {
       type: 1,
     });
     expect(wg.complete_filter("txx").fields.length).toBe(0);
-  })
+  });
 });
+
+describe("Wiregasm Library - Export Objects", () => {
+  const wg = new Wiregasm();
+
+  beforeAll(() => {
+    return wg.init(loadWiregasm, buildTestOverrides());
+  });
+
+  afterAll(() => {
+    wg.destroy();
+  });
+
+  test("tap0 eo:http works", async () => {
+    const data = await fs.readFile("samples/http.cap");
+    const ret = wg.load("http.cap", data);
+    expect(ret.code).toEqual(0);
+    const res = wg.tap({ "tap0": "eo:http" });
+    expect(res).toStrictEqual({
+      "error": "",
+      "taps": [
+        {
+          "objects": [
+            {
+              "_download": "eo:http_0",
+              "filename": (
+                "ads?client=ca-pub-2309191948673629&random=1084443430285&" +
+                "lmt=1082467020&format=468x60_as&output=html&url=http%3A%2F%2F" +
+                "www.ethereal.com%2Fdownload.html&color_bg=FFFFFF&" +
+                "color_text=333333&color_link=000000&color_url=666633&" +
+                "color_border=666633"
+              ),
+              "hostname": "pagead2.googlesyndication.com",
+              "len": 3608,
+              "pkt": 27,
+              "type": "text/html",
+            },
+            {
+              "_download": "eo:http_1",
+              "filename": "download.html",
+              "hostname": "www.ethereal.com",
+              "len": 18070,
+              "pkt": 38,
+              "type": "text/html",
+            },
+          ],
+          "proto": "HTTP",
+          "tap": "eo:http",
+          "type": "eo",
+        },
+      ],
+    },);
+  });
+
+  test("tap0 eo:tftp works", async () => {
+    const data = await fs.readFile("samples/tftp_rrq.pcap");
+    const ret = wg.load("tftp_rrq.pcap", data);
+    expect(ret.code).toEqual(0);
+    const res = wg.tap({ "tap0": "eo:tftp" });
+
+    expect(res).toStrictEqual({
+      "error": "",
+      "taps": [
+        {
+          "objects": [
+            {
+              "_download": "eo:tftp_0",
+              "filename": "rfc1350.txt",
+              "hostname": "",
+              "len": 24599,
+              "pkt": 98,
+              "type": "",
+            },
+          ],
+          "proto": "TFTP",
+          "tap": "eo:tftp",
+          "type": "eo",
+        },
+      ],
+    },);
+  });
+
+  test("download works", async () => {
+    const data = await fs.readFile("samples/http.cap");
+    const ret = wg.load("dhcp.pcap", data);
+    expect(ret.code).toEqual(0);
+    const download = wg.download("eo:http_0");
+    expect(download.download.data).not.toBe("");
+    expect(download.download.mime).toBe("text/html");
+    expect(download.download.file).not.toBe("");
+    expect(download.error).toBe("");
+
+    const second_file = wg.download("eo:http_1");
+    expect(second_file.download.data).not.toBe("");
+    expect(second_file.download.mime).toBe("text/html");
+    expect(second_file.download.file).toBe("download.html");
+    expect(second_file.error).toBe("");
+  });
+
+  describe("Taps: negative cases", () => {
+    test("Wrong tap index returns nothing", async () => {
+      const data = await fs.readFile("samples/http.cap");
+      const ret = wg.load("http.cap", data);
+      expect(ret.code).toEqual(0);
+      const res = wg.tap({ "tap1": "eo:http" });
+      expect(res).toStrictEqual({
+        "error": "",
+        "taps": [],
+      },);
+    });
+
+    test("Unsupported tap values are handled properly", async () => {
+      const data = await fs.readFile("samples/http.cap");
+      const ret = wg.load("http.cap", data);
+      expect(ret.code).toEqual(0);
+      const UNSUPPORTED_VALUE = "stat:http";
+      const res = wg.tap({ "tap0": UNSUPPORTED_VALUE });
+      expect(res).toStrictEqual({
+        "error": `${UNSUPPORTED_VALUE} not recognized`,
+        "taps": [],
+      },);
+    });
+
+    test("Unsupported export object type is handled properly", async () => {
+      const data = await fs.readFile("samples/http.cap");
+      const ret = wg.load("http.cap", data);
+      expect(ret.code).toEqual(0);
+      const UNSUPPORTED_VALUE = "eo:mmm";
+      const res = wg.tap({ "tap0": UNSUPPORTED_VALUE });
+      expect(res).toStrictEqual({
+        "error": "eo=mmm not found",
+        "taps": [],
+      },);
+    });
+
+    test("Missing input values", async () => {
+      const data = await fs.readFile("samples/http.cap");
+      const ret = wg.load("http.cap", data);
+      expect(ret.code).toEqual(0);
+      const res = wg.tap({});
+      expect(res).toStrictEqual({
+        "error": "",
+        "taps": [],
+      },);
+    });
+  });
+});
+
 
 const buildCompressedOverrides = async (): Promise<WiregasmLibOverrides> => {
   const wasm = pako.inflate(await fs.readFile("built/bin/wiregasm.wasm.gz"));
@@ -273,7 +420,7 @@ describe("Wiregasm Library - Set Preferences", () => {
   });
 
   test("set preferences works for diameter", async () => {
-    
+
     const pref = wg.get_pref("diameter", "tcp.port");
     expect(pref.type).toBe(PrefType.PREF_DECODE_AS_RANGE);
     expect(pref.range_value).toBe(

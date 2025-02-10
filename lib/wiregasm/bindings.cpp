@@ -22,6 +22,33 @@ EMSCRIPTEN_BINDINGS(Wiregasm)
   emscripten::function("applyPreferences", &wg_prefs_apply_all);
 }
 
+EMSCRIPTEN_BINDINGS(TapResponse)
+{
+  value_object<TapResponse>("TapResponse")
+    .field("taps", &TapResponse::taps)
+    .field("error", &TapResponse::error);
+}
+
+EMSCRIPTEN_BINDINGS(ExportObject)
+{
+  value_object<ExportObject>("ExportObject")
+    .field("pkt", &ExportObject::pkt)
+    .field("hostname", &ExportObject::hostname)
+    .field("type", &ExportObject::type)
+    .field("len", &ExportObject::len)
+    .field("filename", &ExportObject::filename)
+    .field("_download", &ExportObject::_download);
+}
+
+EMSCRIPTEN_BINDINGS(ExportObjectTap)
+{
+  value_object<ExportObjectTap>("ExportObjectTap")
+    .field("tap", &ExportObjectTap::tap)
+    .field("type", &ExportObjectTap::type)
+    .field("proto", &ExportObjectTap::proto)
+    .field("objects", &ExportObjectTap::objects);
+}
+
 EMSCRIPTEN_BINDINGS(DissectSession)
 {
   class_<DissectSession>("DissectSession")
@@ -29,6 +56,8 @@ EMSCRIPTEN_BINDINGS(DissectSession)
     .function("load", &DissectSession::load)
     .function("getFrames", &DissectSession::getFrames)
     .function("getFrame", &DissectSession::getFrame)
+    .function("tap", &DissectSession::tap)
+    .function("download", &DissectSession::download)
     .function("follow", &DissectSession::follow);
 }
 
@@ -206,4 +235,22 @@ EMSCRIPTEN_BINDINGS(stl_wrappers)
   register_vector<PrefEnum>("VectorPrefEnum");
   // Frame::follow is a vector of vectors of strings
   register_vector<vector<string>>("VectorVectorString");
+  register_vector<ExportObject>("VectorExportObject");
+  register_vector<ExportObjectTap>("VectorExportObjectTap");
+  register_map<string, string>("map<string, string>");
+}
+
+EMSCRIPTEN_BINDINGS(Download)
+{
+  value_object<Download>("Download")
+    .field("file", &Download::file)
+    .field("mime", &Download::mime)
+    .field("data", &Download::data);
+}
+
+EMSCRIPTEN_BINDINGS(DownloadResponse)
+{
+  value_object<DownloadResponse>("DownloadResponse")
+    .field("error", &DownloadResponse::error)
+    .field("download", &DownloadResponse::download);
 }

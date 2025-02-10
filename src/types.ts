@@ -112,7 +112,6 @@ export interface CompleteField {
   name: string;
 }
 
-
 export interface FramesResponse {
   frames: Vector<FrameMeta>;
   matched: number;
@@ -143,7 +142,6 @@ export interface FrameMeta {
   fg: number;
   columns: Vector<string>;
 }
-
 export interface LoadSummary {
   filename: string;
   file_type: string;
@@ -159,6 +157,34 @@ export interface LoadResponse {
   code: number;
   error: string;
   summary: LoadSummary;
+}
+
+export interface Download {
+  file: string;
+  mime: string;
+  data: string;
+}
+
+export interface DownloadResponse {
+  error: string;
+  download: Download;
+}
+
+export type TapInput = Record<string, string>;
+
+interface ExportObject {
+  hostname: string;
+  pkt: number;
+  type: string;
+  filename: string;
+  _download: string;
+  len: number;
+}
+export interface TapResponse {
+  type: string;
+  tap: string;
+  proto: string;
+  objects: Vector<ExportObject>;
 }
 
 export interface DissectSession {
@@ -191,6 +217,13 @@ export interface DissectSession {
   getFrame(number: number): Frame;
 
   follow(follow: string, filter: string): Follow;
+
+  tap(taps: string): {
+    taps: Vector<TapResponse>;
+    error: string;
+  };
+
+  download(token: string): DownloadResponse;
 }
 
 export interface DissectSessionConstructable {
@@ -281,7 +314,6 @@ export interface WiregasmLib extends EmscriptenModule {
 
   /**
    * List all the preference modules
- 
    * @returns List of preference modules
    */
   listModules(): Vector<PrefModule>;
@@ -332,7 +364,9 @@ export interface WiregasmLib extends EmscriptenModule {
    */
   checkFilter(filter: string): CheckFilterResponse;
 
-  completeFilter(filter: string): { err: string; fields: Vector<CompleteField> };
+  completeFilter(filter: string): { fields: Vector<CompleteField> };
+
+  download(token: string): Download;
   /**
    * Returns the column headers
    */

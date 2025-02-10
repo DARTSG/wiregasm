@@ -5,9 +5,11 @@
 #include <vector>
 #include <glib.h>
 #include <wireshark/cfile.h>
+#include <map>
+#include <nlohmann/json.hpp>
 
 using namespace std;
-
+using json = nlohmann::json;
 
 struct ProtoTree
 {
@@ -23,7 +25,8 @@ struct ProtoTree
   vector<ProtoTree> tree;
 };
 
-struct FollowPayload {
+struct FollowPayload
+{
   int number;
   string data;
   unsigned int server;
@@ -46,7 +49,8 @@ struct DataSource
   string data;
 };
 
-struct CompleteField {
+struct CompleteField
+{
   string field;
   int type;
   string name;
@@ -103,6 +107,32 @@ struct CheckFilterResponse
   string error;
 };
 
+struct ExportObject
+{
+  unsigned pkt;
+  string hostname;
+  string type;
+  string filename;
+  string _download;
+  size_t len;
+};
+
+struct ExportObjectTap
+{
+  string tap;
+  string type;
+  string proto;
+  vector<ExportObject> objects;
+};
+
+using TapInput = std::map<string, string>;
+
+struct TapResponse
+{
+  vector<ExportObjectTap> taps;
+  string error;
+};
+
 struct PrefEnum
 {
   string name;
@@ -154,6 +184,19 @@ struct FilterCompletionResponse
   vector<CompleteField> fields;
 };
 
+struct Download
+{
+  string file;
+  string mime;
+  string data;
+};
+
+struct DownloadResponse
+{
+  string error;
+  Download download;
+};
+
 // globals
 
 bool wg_init();
@@ -184,6 +227,8 @@ public:
   FramesResponse getFrames(string filter, int skip, int limit);
   Frame getFrame(int number);
   Follow follow(string follow, string filter);
+  TapResponse tap(string taps);
+  DownloadResponse download(string token);
   ~DissectSession();
 };
 
