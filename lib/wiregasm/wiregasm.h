@@ -6,8 +6,10 @@
 #include <glib.h>
 #include <wireshark/cfile.h>
 #include <map>
+#include <nlohmann/json.hpp>
 
 using namespace std;
+using json = nlohmann::json;
 
 struct ProtoTree
 {
@@ -217,7 +219,7 @@ class DissectSession
 private:
   string path;
   capture_file capture_file;
-  GHashTable* filter_table;
+  GHashTable *filter_table;
 
 public:
   DissectSession(string _path);

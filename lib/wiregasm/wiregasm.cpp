@@ -20,23 +20,6 @@ static gboolean wg_initialized = FALSE;
 static e_prefs *prefs_p;
 
 
-template <typename T = string>
-map<string, T> parse_json_to_map(string json) {
-  map<string, T> result;
-  emscripten::val json_object = emscripten::val::global("JSON").call<emscripten::val>("parse", json);
-  emscripten::val keys = emscripten::val::global("Object").call<emscripten::val>("keys", json_object);
-
-  int length = keys["length"].as<int>();
-  for (int i = 0; i < length; ++i) {
-    string key = keys[i].as<string>();
-    T value = json_object[key].as<T>();
-    result[key] = value;
-  }
-
-  return result;
-}
-
-
 string wg_get_upload_dir()
 {
   return string(UPLOAD_DIR);
@@ -498,10 +481,10 @@ Frame DissectSession::getFrame(int number)
   return f;
 }
 
-TapResponse DissectSession::tap(string json)
+TapResponse DissectSession::tap(string data)
 {
   TapInput taps;
-  taps = parse_json_to_map(json);
+  taps = json::parse(data);
 
   return wg_session_process_tap(&this->capture_file, taps);
 }
