@@ -4,7 +4,6 @@ import { PrefType, Wiregasm, WiregasmLib, WiregasmLibOverrides } from ".";
 
 import loadWiregasm from "../built/bin/wiregasm.js";
 import pako from "pako";
-import exp from "constants";
 
 // overrides need to be copied over to every instance
 const buildTestOverrides = (): WiregasmLibOverrides => {
