@@ -180,11 +180,12 @@ interface ExportObject {
   _download: string;
   len: number;
 }
+
 export interface TapResponse {
   type: string;
   tap: string;
   proto: string;
-  objects: Vector<ExportObject>;
+  objects: ExportObject[];
 }
 
 export interface DissectSession {
@@ -219,7 +220,7 @@ export interface DissectSession {
   follow(follow: string, filter: string): Follow;
 
   tap(taps: string): {
-    taps: Vector<TapResponse>;
+    taps: Vector<string>;
     error: string;
   };
 

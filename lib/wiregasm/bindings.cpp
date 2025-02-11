@@ -31,22 +31,22 @@ EMSCRIPTEN_BINDINGS(TapResponse)
 
 EMSCRIPTEN_BINDINGS(ExportObject)
 {
-  value_object<ExportObject>("ExportObject")
-    .field("pkt", &ExportObject::pkt)
-    .field("hostname", &ExportObject::hostname)
-    .field("type", &ExportObject::type)
-    .field("len", &ExportObject::len)
-    .field("filename", &ExportObject::filename)
-    .field("_download", &ExportObject::_download);
+  value_object<eo::ExportObject>("ExportObject")
+    .field("pkt", &eo::ExportObject::pkt)
+    .field("hostname", &eo::ExportObject::hostname)
+    .field("type", &eo::ExportObject::type)
+    .field("len", &eo::ExportObject::len)
+    .field("filename", &eo::ExportObject::filename)
+    .field("_download", &eo::ExportObject::_download);
 }
 
 EMSCRIPTEN_BINDINGS(ExportObjectTap)
 {
-  value_object<ExportObjectTap>("ExportObjectTap")
-    .field("tap", &ExportObjectTap::tap)
-    .field("type", &ExportObjectTap::type)
-    .field("proto", &ExportObjectTap::proto)
-    .field("objects", &ExportObjectTap::objects);
+  value_object<eo::ExportObjectTap>("ExportObjectTap")
+    .field("tap", &eo::ExportObjectTap::tap)
+    .field("type", &eo::ExportObjectTap::type)
+    .field("proto", &eo::ExportObjectTap::proto)
+    .field("objects", &eo::ExportObjectTap::objects);
 }
 
 EMSCRIPTEN_BINDINGS(DissectSession)
@@ -235,8 +235,8 @@ EMSCRIPTEN_BINDINGS(stl_wrappers)
   register_vector<PrefEnum>("VectorPrefEnum");
   // Frame::follow is a vector of vectors of strings
   register_vector<vector<string>>("VectorVectorString");
-  register_vector<ExportObject>("VectorExportObject");
-  register_vector<ExportObjectTap>("VectorExportObjectTap");
+  register_vector<eo::ExportObject>("VectorExportObject");
+  register_vector<eo::ExportObjectTap>("VectorExportObjectTap");
   register_map<string, string>("map<string, string>");
 }
 

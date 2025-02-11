@@ -115,10 +115,7 @@ export class Wiregasm {
     const out = this.session.tap(JSON.stringify(taps));
     return {
       ...out,
-      taps: vectorToArray(out.taps).map((tap) => ({
-        ...tap,
-        objects: vectorToArray(tap.objects),
-      })),
+      taps: vectorToArray(out.taps).map((t) => JSON.parse(t)),
     }
   }
 

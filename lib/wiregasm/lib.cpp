@@ -1354,13 +1354,13 @@ DownloadResponse wg_session_process_download(capture_file *cfile, const char *to
  *                  (o) filename - filename
  *                  (m) len - object length
  */
-static ExportObjectTap
+static eo::ExportObjectTap
 wg_session_process_tap_eo_cb(void *tapdata)
 {
   export_object_list_t *tap_object = (export_object_list_t *)tapdata;
   struct wg_export_object_list *object_list = (struct wg_export_object_list *)tap_object->gui_data;
   GSList *slist;
-  ExportObjectTap res;
+  eo::ExportObjectTap res;
   res.tap = object_list->type;
   res.type = "eo";
   res.proto = object_list->proto;
@@ -1369,7 +1369,7 @@ wg_session_process_tap_eo_cb(void *tapdata)
   for (slist = object_list->entries; slist; slist = slist->next)
   {
     const export_object_entry_t *eo_entry = (export_object_entry_t *)slist->data;
-    ExportObject obj;
+    eo::ExportObject obj;
     obj.pkt = eo_entry->pkt_num;
     if (eo_entry->hostname)
       obj.hostname = eo_entry->hostname;
@@ -1476,7 +1476,8 @@ TapResponse wg_session_process_tap(capture_file *cfile, TapInput taps)
     {
       if (strncmp(((struct wg_export_object_list *)taps_data[i])->type, "eo", 2))
       {
-        buf.taps.push_back(wg_session_process_tap_eo_cb(taps_data[i]));
+        json j = wg_session_process_tap_eo_cb(taps_data[i]);
+        buf.taps.push_back(j.dump());
       }
       remove_tap_listener(taps_data[i]);
     }

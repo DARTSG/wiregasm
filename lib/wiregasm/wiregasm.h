@@ -107,29 +107,34 @@ struct CheckFilterResponse
   string error;
 };
 
-struct ExportObject
-{
-  unsigned pkt;
-  string hostname;
-  string type;
-  string filename;
-  string _download;
-  size_t len;
-};
+namespace eo {
+  struct ExportObject
+  {
+    unsigned pkt;
+    string hostname;
+    string type;
+    string filename;
+    string _download;
+    size_t len;
+  };
 
-struct ExportObjectTap
-{
-  string tap;
-  string type;
-  string proto;
-  vector<ExportObject> objects;
-};
+  struct ExportObjectTap
+  {
+    string tap;
+    string type;
+    string proto;
+    vector<ExportObject> objects;
+  };
+
+  NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExportObject, pkt, hostname, type, filename, _download, len);
+  NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExportObjectTap, tap, type, proto, objects);
+}
 
 using TapInput = std::map<string, string>;
 
 struct TapResponse
 {
-  vector<ExportObjectTap> taps;
+  vector<string> taps;
   string error;
 };
 
