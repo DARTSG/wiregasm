@@ -263,6 +263,106 @@ describe("Wiregasm Library - Export Objects", () => {
     expect(second_file.error).toBe("");
   });
 
+  test("tap0 endpt:Ethernet works", async () => {
+    const data = await fs.readFile("samples/http.cap");
+    const ret = wg.load("http.cap", data);
+    expect(ret.code).toEqual(0);
+    const res = wg.tap({ "tap0": "endpt:Ethernet" });
+    expect(res).toStrictEqual({
+      "error": "",
+      "taps": [
+        {
+          "convs": [],
+          "geoip": false,
+          "hosts": [
+            {
+              "filter": "eth.addr==00:00:01:00:00:00",
+              "host": "Xerox_00:00:00",
+              "port": "",
+              "rxb": 22768,
+              "rxf": 23,
+              "txb": 2323,
+              "txf": 20,
+            },
+            {
+              "filter": "eth.addr==fe:ff:20:00:01:00",
+              "host": "fe:ff:20:00:01:00",
+              "port": "",
+              "rxb": 2323,
+              "rxf": 20,
+              "txb": 22768,
+              "txf": 23,
+            },
+          ],
+          "proto": "Ethernet",
+          "tap": "endpt:Ethernet",
+          "type": "host",
+        },
+      ],
+    },);
+  });
+
+
+  test("tap0 conv:IPv4 works", async () => {
+    const data = await fs.readFile("samples/http.cap");
+    const ret = wg.load("http.cap", data);
+    expect(ret.code).toEqual(0);
+    const res = wg.tap({ "tap0": "conv:IPv4" });
+    expect(res).toStrictEqual({
+      "error": "",
+      "taps": [
+        {
+          "convs": [
+            {
+              "daddr": "65.208.228.223",
+              "dport": "",
+              "filter": "ip.addr==145.254.160.237 && ip.addr==65.208.228.223",
+              "rxb": 19344,
+              "rxf": 18,
+              "saddr": "145.254.160.237",
+              "sport": "",
+              "start": 0,
+              "stop": 30.393704,
+              "txb": 1351,
+              "txf": 16,
+            },
+            {
+              "daddr": "145.253.2.203",
+              "dport": "",
+              "filter": "ip.addr==145.254.160.237 && ip.addr==145.253.2.203",
+              "rxb": 188,
+              "rxf": 1,
+              "saddr": "145.254.160.237",
+              "sport": "",
+              "start": 2.553672,
+              "stop": 2.91419,
+              "txb": 89,
+              "txf": 1,
+            },
+            {
+              "daddr": "216.239.59.99",
+              "dport": "",
+              "filter": "ip.addr==145.254.160.237 && ip.addr==216.239.59.99",
+              "rxb": 3236,
+              "rxf": 4,
+              "saddr": "145.254.160.237",
+              "sport": "",
+              "start": 2.984291,
+              "stop": 4.776868,
+              "txb": 883,
+              "txf": 3,
+            },
+          ],
+          "geoip": false,
+          "hosts": [],
+          "proto": "IPv4",
+          "tap": "conv:IPv4",
+          "type": "conv",
+        },
+      ],
+    },);
+  });
+
   describe("Taps: negative cases", () => {
     test("Wrong tap index returns nothing", async () => {
       const data = await fs.readFile("samples/http.cap");
@@ -287,16 +387,17 @@ describe("Wiregasm Library - Export Objects", () => {
       },);
     });
 
-    test("Unsupported export object type is handled properly", async () => {
-      const data = await fs.readFile("samples/http.cap");
-      const ret = wg.load("http.cap", data);
-      expect(ret.code).toEqual(0);
-      const UNSUPPORTED_VALUE = "eo:mmm";
-      const res = wg.tap({ "tap0": UNSUPPORTED_VALUE });
-      expect(res).toStrictEqual({
-        "error": "eo=mmm not found",
-        "taps": [],
-      },);
+    ["eo", "conv", "endpt"].map((tap) => {
+      test(`Unsupported tap type ${tap} is handled properly`, async () => {
+        const data = await fs.readFile("samples/http.cap");
+        const ret = wg.load("http.cap", data);
+        expect(ret.code).toEqual(0);
+        const res = wg.tap({ "tap0": `${tap}:unsupported` });
+        expect(res).toStrictEqual({
+          "error": `${tap} unsupported not found`,
+          "taps": [],
+        },);
+      });
     });
 
     test("Missing input values", async () => {

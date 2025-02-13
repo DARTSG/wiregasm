@@ -108,6 +108,49 @@ struct CheckFilterResponse
 };
 
 namespace eo {
+  struct GeoIp {
+    std::string country;
+    std::string country_iso;
+    std::string city;
+    std::string as_org;
+    uint32_t as;
+    double lat;
+    double lon;
+  };
+
+  struct Conversation {
+    std::string saddr;
+    std::string daddr;
+    std::string sport;
+    std::string dport;
+    unsigned txf;
+    unsigned txb;
+    unsigned rxf;
+    unsigned rxb;
+    double start;
+    double stop;
+    std::string filter;
+  };
+
+  struct Host {
+    std::string host;
+    std::string port;
+    unsigned txf;
+    unsigned txb;
+    unsigned rxf;
+    unsigned rxb;
+    std::string filter;
+  };
+
+  struct TapConvResponse {
+    std::string tap;
+    std::string type;
+    std::string proto;
+    bool geoip;
+    std::vector<Conversation> convs;
+    std::vector<Host> hosts;
+  };
+
   struct ExportObject
   {
     unsigned pkt;
@@ -117,7 +160,6 @@ namespace eo {
     string _download;
     size_t len;
   };
-
   struct ExportObjectTap
   {
     string tap;
@@ -127,7 +169,11 @@ namespace eo {
   };
 
   NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExportObject, pkt, hostname, type, filename, _download, len);
-  NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExportObjectTap, tap, type, proto, objects);
+  NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeoIp, country, country_iso, city, as_org, as, lat, lon);
+  NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Conversation, saddr, daddr, sport, dport, txf, txb, rxf, rxb, start, stop, filter);
+  NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Host, host, port, txf, txb, rxf, rxb, filter);
+  NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(TapConvResponse, tap, type, proto, geoip, convs, hosts);
+  NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ExportObjectTap, tap, type, proto, objects)
 }
 
 using TapInput = std::map<string, string>;
